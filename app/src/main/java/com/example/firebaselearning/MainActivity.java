@@ -36,11 +36,17 @@ public class MainActivity extends AppCompatActivity {
         registerLoginText = findViewById(R.id.registerLoginText);
         submitBtn = findViewById(R.id.submitBtn);
 
-        bLoginScreen = true;
+        bLoginScreen = false;
         
         View view = null;
         userNameText.setVisibility(view.GONE);
-        
+
+        // if user is already logged in, then open friends activity
+        /*if(FirebaseAuth.getInstance().getCurrentUser() != null) {
+            startActivity(new Intent(MainActivity.this, FriendsActivity.class));
+            finish();
+        }*/
+
         registerLoginText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
