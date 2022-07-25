@@ -16,6 +16,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,10 +44,10 @@ public class MainActivity extends AppCompatActivity {
         userNameText.setVisibility(view.GONE);
 
         // if user is already logged in, then open friends activity
-        /*if(FirebaseAuth.getInstance().getCurrentUser() != null) {
+        if(FirebaseAuth.getInstance().getCurrentUser() != null) {
             startActivity(new Intent(MainActivity.this, FriendsActivity.class));
             finish();
-        }*/
+        }
 
         registerLoginText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
                 if(emailText.getText().toString().isEmpty() || passwordText.getText().toString().isEmpty()) {
                     // check if we are in register mode
                     if(bLoginScreen == false && userNameText.getText().toString().isEmpty()) {
-                        Toast.makeText(MainActivity.this, "Empty boxes not accepted", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, "Empty boxes not accepted", Toast.LENGTH_SHORT).show();
                         return;
                     }
                 }
@@ -101,10 +103,10 @@ public class MainActivity extends AppCompatActivity {
                         if(task.isSuccessful()) {
                             // open friends activity
                             startActivity(new Intent(MainActivity.this, FriendsActivity.class));
-                            Toast.makeText(MainActivity.this, "Logged in successfully", Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, "Logged in successfully", Toast.LENGTH_SHORT).show();
                         }
                         else {
-                            Toast.makeText(MainActivity.this, task.getException().getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -116,12 +118,21 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()) {
+                            /*FirebaseDatabase.getInstance().getReference("user/"+FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .setValue(new User(userNameText.getText().toString(), emailText.getText().toString(), ""));*/
+
+                            // Database's URL
+                            FirebaseDatabase database = FirebaseDatabase.getInstance("https://fir-learning-cf4ae-default-rtdb.europe-west1.firebasedatabase.app/");
+                            DatabaseReference myRef = database.getReference("users/"+FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                            myRef.setValue(new User(userNameText.getText().toString(), emailText.getText().toString(), ""));
+
                             // open friends activity
                             startActivity(new Intent(MainActivity.this, FriendsActivity.class));
-                            Toast.makeText(MainActivity.this, "Account created successfully", Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, "Account created successfully", Toast.LENGTH_SHORT).show();
                         }
                         else {
-                            Toast.makeText(MainActivity.this, task.getException().getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
